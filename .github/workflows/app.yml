@@ -1,4 +1,4 @@
-name: roshan
+name: windowd10RDP
 on: workflow_dispatch
 jobs:
   build:
@@ -8,27 +8,21 @@ jobs:
     - name: Download Ngrok.
       run: |
         Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-        Invoke-WebRequest https://raw.githubusercontent.com/roshan-iolite/windowd10RDP/main/start.bat?token=AVERY666F2ZWJQA7JCUNPK3BC5VYY -OutFile start.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/roshan-iolite/windowd10RDP/main/wallpaper.bat?token=AVERY62VTMDISOTLC5CQRQTBC5VY2 -OutFile wallpaper.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/roshan-iolite/windowd10RDP/main/loop.bat?token=AVERY66EUU6TKLXLELXZQHTBC5VYU -OutFile loop.bat
-    - name: Mendownload Launcher.
-      run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/RealZytek/rdp/main/launcher/Node.js.lnk -OutFile Node.js.lnk
-        Invoke-WebRequest https://raw.githubusercontent.com/RealZytek/rdp/main/launcher/Visual%20Studio%202019.lnk -OutFile "Visual Studio 2019.lnk"
+        Invoke-WebRequest https://raw.githubusercontent.com/roshan-iolite/windowd10RDP/main/start.bat -OutFile start.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/roshan-iolite/windowd10RDP/main/wallpaper.bat -OutFile wallpaper.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/roshan-iolite/windowd10RDP/main/loop.bat -OutFile loop.bat
     - name: Extract Ngrok File.
       run: Expand-Archive ngrok.zip
-    - name: Connect Ke Akun Ngrok.
+    - name: Connect Ngrok.
       run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
     - name: Windows10 RDP.
-      run: | 
+      run: |
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
         copy wallpaper.bat D:\a\wallpaper.bat
-        copy Node.js.lnk C:\Users\Public\Desktop\Node.js.lnk
-        copy "Visual Studio 2019.lnk" "C:\Users\Public\Desktop\Visual Studio 2019.lnk"
     - name: Tunnel.
       run: Start-Process Powershell -ArgumentList '-Noexit -Command ".\ngrok\ngrok.exe tcp --region ap 3389"'
     - name: Connect RDP.
